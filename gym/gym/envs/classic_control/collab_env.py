@@ -347,18 +347,18 @@ class CollabEnv(gym.Env):
 		    	self.viewer.add_geom(obstacle_image)
 		    	self.obstacles_render.append(obstacle_image)
 
-		    star = self.star
-		    l,r,t,b = -star.length, star.length, star.height, -star.height
-		    l,r,t,b = l*x_scale, r*x_scale, t*y_scale, b*y_scale
-		    star_image = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
-		    star_image.set_color(255,215,0)
-		    star_trans = rendering.Transform()
-		    star_image.add_attr(star_trans)
-		    self.viewer.add_geom(star_image)
-		    x, y = star.x, star.y
-		    x = (x - self.min_x)*x_scale
+			star = self.star
+			l,r,t,b = -star.length, star.length, star.height, -star.height
+			l,r,t,b = l*x_scale, r*x_scale, t*y_scale, b*y_scale
+			star_image = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
+			star_image.set_color(255,215,0)
+			star_trans = rendering.Transform()
+			star_image.add_attr(star_trans)
+			self.viewer.add_geom(star_image)
+			x, y = star.x, star.y
+			x = (x - self.min_x)*x_scale
 			y = (y - self.min_y)*y_scale
-			self.obstacles_trans[i].set_translation(x, y)
+			star_trans.set_translation(x, y)
 			
 
 		for i, obstacle in enumerate(self.obstacles):
