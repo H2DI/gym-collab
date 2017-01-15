@@ -19,7 +19,7 @@ max_x, max_y, max_vx, max_vy = 5., 8., 5., 15.
 class Agent(object):
 
     def __init__(self, x=0., y=0.5, length=0.5, height=0.5, agent_number=0):
-        self.gravity = 4.
+        self.gravity = 20.
         self.mass = 1.0
         self.height = height # half height
         self.length = length # half length
@@ -205,7 +205,7 @@ class CollabEnv(gym.Env):
     def __init__(self):
         self.gravity = 9.8
         self.tau = 0.02  # seconds between state updates
-        self.number_of_agents = 2
+        self.number_of_agents = 1
         self.viewer = None
 
         self.agents = []
@@ -232,7 +232,7 @@ class CollabEnv(gym.Env):
         #self._reset()
 
     def update(self): # updates the state of the environment
-        reward = -5.
+        reward = 0.
         done = False
         for i, agent in enumerate(self.agents):
             self.state[4*i] = agent.x
@@ -240,15 +240,15 @@ class CollabEnv(gym.Env):
             self.state[4*i + 2] = agent.vx
             self.state[4*i + 3] = agent.vy
 
-            reward += agent.y
+            reward +=  (agent.x  -  self.min_x) / 1000
 
             star = self.star
             if not(star.found) and (abs(agent.x - star.x) < (agent.length + star.length) ) and (abs(agent.y - star.y) < (agent.height + star.height)):
-                reward += 100.
+                reward += 0.
                 star.found = True
-                done = True
+                #done = True
 
-        reward = reward / self.number_of_agents
+        reward = reward #/ self.number_of_agents
         return reward, done
 
     def others_wait(self, agent_number):
@@ -292,7 +292,7 @@ class CollabEnv(gym.Env):
         self.obstacles = []
 
         for i in range(self.number_of_agents):
-            self.agents.append(Agent(x=self.min_x + 1., y=0.5 + 3*i, length=0.5, height=0.5, agent_number=i))
+            self.agents.append(Agent(x=self.min_x + 1. + i, y=0.5, length=0.5, height=0.5, agent_number=i))
 
         for agent in self.agents:
             i = agent.agent_number
@@ -301,8 +301,8 @@ class CollabEnv(gym.Env):
             self.state[4*i + 2] = agent.vx
             self.state[4*i + 3] = agent.vy
 
-        self.star = Star(2., 0.5, 0.5, 0.5)
-        self.obstacles = [Obstacle(0., 1., 0.5, 2.)]
+        self.star = Star(3., 0.5, 2., 0.5)
+        #self.obstacles = [Obstacle(0., 0.9, 0.5, 1.8)]
 
         return np.array(self.state)
 
