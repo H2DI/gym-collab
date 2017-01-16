@@ -12,8 +12,8 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
-min_x, min_y, min_vx, min_vy = -5., 0., -5., -15.
-max_x, max_y, max_vx, max_vy = 5., 8., 5., 15.
+min_x, min_y, min_vx, min_vy = 0., 0., -2., -15.
+max_x, max_y, max_vx, max_vy = 10., 8., 2., 15.
 
 
 class Agent(object):
@@ -240,7 +240,8 @@ class CollabEnv(gym.Env):
             self.state[4*i + 2] = agent.vx
             self.state[4*i + 3] = agent.vy
 
-            reward +=  (agent.x  -  self.min_x) / 1000
+            reward += (agent.x  -  agent.min_x) / 10.
+            # print agent.x, reward
 
             star = self.star
             if not(star.found) and (abs(agent.x - star.x) < (agent.length + star.length) ) and (abs(agent.y - star.y) < (agent.height + star.height)):
@@ -248,7 +249,7 @@ class CollabEnv(gym.Env):
                 star.found = True
                 #done = True
 
-        reward = reward #/ self.number_of_agents
+        # reward = reward / self.number_of_agents
         return reward, done
 
     def others_wait(self, agent_number):
@@ -292,7 +293,7 @@ class CollabEnv(gym.Env):
         self.obstacles = []
 
         for i in range(self.number_of_agents):
-            self.agents.append(Agent(x=self.min_x + 1. + i, y=0.5, length=0.5, height=0.5, agent_number=i))
+            self.agents.append(Agent(x=self.min_x + 0.5 + i, y=0.5, length=0.5, height=0.5, agent_number=i))
 
         for agent in self.agents:
             i = agent.agent_number
@@ -346,7 +347,7 @@ class CollabEnv(gym.Env):
             self.obstacles_trans = []
 
             for obstacle in self.obstacles:
-                l,r,t,b = -obstacle.length, obstacle.length, obstacle.height, -obstacle.height
+                l,r,t,b = -obstacle.length, obstacle.length, obstacle.height, - obstacle.height
                 l,r,t,b = l*x_scale, r*x_scale, t*y_scale, b*y_scale
                 obstacle_image = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
 
@@ -356,20 +357,20 @@ class CollabEnv(gym.Env):
 
                 self.viewer.add_geom(obstacle_image)
                 self.obstacles_render.append(obstacle_image)
-                print("o")
+                
             
-            star = self.star
-            l,r,t,b = -star.length, star.length, star.height, -star.height
-            l,r,t,b = l*x_scale, r*x_scale, t*y_scale, b*y_scale
-            star_image = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
-            star_image.set_color(255,215,0)
-            star_trans = rendering.Transform()
-            star_image.add_attr(star_trans)
-            self.viewer.add_geom(star_image)
-            x, y = star.x, star.y
-            x = (x - self.min_x)*x_scale
-            y = (y - self.min_y)*y_scale
-            star_trans.set_translation(x, y)
+            # star = self.star
+            # l,r,t,b = -star.length, star.length, star.height, -star.height
+            # l,r,t,b = l*x_scale, r*x_scale, t*y_scale, b*y_scale
+            # star_image = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
+            # star_image.set_color(255,215,0)
+            # star_trans = rendering.Transform()
+            # star_image.add_attr(star_trans)
+            # self.viewer.add_geom(star_image)
+            # x, y = star.x, star.y
+            # x = (x - self.min_x)*x_scale
+            # y = (y - self.min_y)*y_scale
+            # star_trans.set_translation(x, y)
 
 
         for i, obstacle in enumerate(self.obstacles):
